@@ -58,5 +58,11 @@ const dataGraph = [
 
 const { nodesToDraw, linesToDraw } = startRendering(dataGraph, 300, 40)
 drawNodes(nodesToDraw)
-// drawNodes([nodesToDraw[1], nodesToDraw[5]])
 drawLines(linesToDraw)
+
+var modal = document.getElementById('modal')
+var closePopup = document.getElementsByClassName('close')[0]
+
+closePopup.onclick = function () {
+  modal.style.display = 'none'
+}

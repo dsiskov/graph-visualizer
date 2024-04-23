@@ -1,10 +1,8 @@
 import { nodeWidthPx, nodeHeightPx } from './render.js'
 
-// Define SVG dimensions
-const svgWidth = 1400
-const svgHeight = 1200
+const svgWidth = 2400
+const svgHeight = 2200
 
-// Create SVG element
 const svg = d3
   .select('#svg-container')
   .attr('width', svgWidth)
@@ -22,6 +20,12 @@ export function drawNodes(nodes) {
     .attr('width', nodeWidthPx)
     .attr('height', nodeHeightPx)
     .style('fill', 'steelblue')
+    .on('click', (d) => {
+      const modal = document.getElementById('modal')
+      modal.style.display = 'block'
+      document.getElementById('modalText').innerText =
+        d.target.__data__.node.description
+    })
 
   svg
     .selectAll('.text')
