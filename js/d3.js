@@ -19,12 +19,14 @@ export function drawNodes(nodes) {
     .attr('y', (d) => d.point.y)
     .attr('width', nodeWidthPx)
     .attr('height', nodeHeightPx)
-    .style('fill', 'steelblue')
+    .style('fill', (d) => (d.selected ? 'red' : 'steelblue'))
     .on('click', (d) => {
       const modal = document.getElementById('modal')
       modal.style.display = 'block'
       document.getElementById('modalText').innerText =
         d.target.__data__.node.description
+
+      d.target.__data__.node.selected = true
     })
 
   svg
