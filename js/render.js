@@ -18,8 +18,8 @@ class Point {
 }
 
 function startRendering(data, firstChildX, firstChildY) {
-  // nodesToDraw = []
-  // linesToDraw = []
+  nodesToDraw = []
+  linesToDraw = []
 
   const roots = data.filter((x) => x.parent === '')
   if (roots.length !== 1)
@@ -34,7 +34,8 @@ function startRendering(data, firstChildX, firstChildY) {
     root,
     firstChildX,
     firstChildY,
-    children.length > 0
+    children.length > 0,
+    true
   )
 
   // render root
@@ -60,7 +61,7 @@ function startRendering(data, firstChildX, firstChildY) {
   return { nodesToDraw, linesToDraw }
 }
 
-function renderGraph(data, node, x, y, hasChildren) {
+function renderGraph(data, node, x, y, hasChildren, initial) {
   if (node.parent !== '') {
     const connectorY = y + nodeHeightPx / 2 // middle of block
     if (hasChildren) {
@@ -91,7 +92,8 @@ function renderGraph(data, node, x, y, hasChildren) {
       children[index],
       x + 2 * connectorWidthPx + nodeWidthPx,
       y + height,
-      descendentCount > 0
+      descendentCount > 0,
+      false
     )
     height += descendentCount * nodeHeightPx + descendentCount * nodeSpacingPx
   }
@@ -99,10 +101,19 @@ function renderGraph(data, node, x, y, hasChildren) {
   if (height) {
     // vertical children connector
     const connectorX = x + connectorWidthPx + nodeWidthPx
-    drawLine(
-      new Point(connectorX, y + nodeHeightPx / 2),
-      new Point(connectorX, y + height + nodeHeightPx / 2)
-    )
+    const connectorY = y + nodeHeightPx / 2
+
+    if (initial) {
+      drawLine(
+        new Point(connectorX, y + 1.5 * nodeHeightPx + nodeSpacingPx),
+        new Point(connectorX, y + height - nodeHeightPx / 2 - nodeSpacingPx)
+      )
+    } else {
+      drawLine(
+        new Point(connectorX, connectorY),
+        new Point(connectorX, connectorY + height)
+      )
+    }
   }
   return height
 }

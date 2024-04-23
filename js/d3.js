@@ -17,10 +17,7 @@ export function drawNodes(nodes) {
     .enter()
     .append('rect')
     .attr('class', 'rect')
-    .attr('x', (d) => {
-      console.log('drawing', d.point.print())
-      return d.point.x
-    })
+    .attr('x', (d) => d.point.x)
     .attr('y', (d) => d.point.y)
     .attr('width', nodeWidthPx)
     .attr('height', nodeHeightPx)
