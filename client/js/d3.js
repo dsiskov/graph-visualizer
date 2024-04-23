@@ -1,4 +1,5 @@
 import { nodeWidthPx, nodeHeightPx } from './render.js'
+// import d3 from 'https://d3js.org/d3.v7.min.js'
 
 const svgWidth = 2400
 const svgHeight = 2200
@@ -23,10 +24,10 @@ export function drawNodes(nodes) {
     .on('click', (d) => {
       const modal = document.getElementById('modal')
       modal.style.display = 'block'
-      document.getElementById('modalText').innerText =
-        d.target.__data__.node.description
+      const { name, description } = d.target.__data__.node
+      document.getElementById('modalText').innerText = `${name}\n${description}`
 
-      d.target.__data__.node.selected = true
+      // nb: changing color should be best done by introducing a 'selected' property to the collection
     })
 
   svg

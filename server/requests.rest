@@ -1,0 +1,6 @@
+@api=http://localhost:4000/api
+
+### 
+# @name get
+GET {{api}}/data
+Content-Type: application/json
