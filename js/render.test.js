@@ -40,6 +40,15 @@ const data = [
 
 describe('render', () => {
   it('works', () => {
-    startRendering(data, 100, 0)
+    const { nodesToDraw, linesToDraw } = startRendering(data, 100, 0)
+
+    console.log(
+      '\n',
+      nodesToDraw.map((x) => `${x.node.name}: ${x.point.print()}`).join('\n'),
+      '\n\n',
+      linesToDraw
+        .map((x) => `${x.point1.print()} -> ${x.point2.print()}`)
+        .join('\n')
+    )
   })
 })

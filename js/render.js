@@ -1,10 +1,10 @@
-const nodeHeightPx = 50
-const nodeWidthPx = 300
-const horizontalLineWidthPx = 15
-const verticalMarginPx = 5
+export const nodeHeightPx = 50
+export const nodeWidthPx = 300
+export const connectorWidthPx = 15
+export const nodeSpacingPx = 5
 
-const nodesToDraw = []
-const linesToDraw = []
+let nodesToDraw = []
+let linesToDraw = []
 
 class Point {
   constructor(x, y) {
@@ -18,9 +18,17 @@ class Point {
 }
 
 function startRendering(data, firstChildX, firstChildY) {
-  const root = data.find((x) => x.parent === '')
+  // nodesToDraw = []
+  // linesToDraw = []
+
+  const roots = data.filter((x) => x.parent === '')
+  if (roots.length !== 1)
+    throw new Error('Multiple or no root elements are not supported')
+
+  const root = roots[0]
   const children = data.filter((x) => x.parent === root.name)
 
+  // render root children
   const height = renderGraph(
     data,
     root,
@@ -28,15 +36,16 @@ function startRendering(data, firstChildX, firstChildY) {
     firstChildY,
     children.length > 0
   )
+
+  // render root
   if (height === 0) {
     // no children
     drawNode(root, firstChildX, firstChildY)
     return
   }
 
-  const rootX = firstChildX - 2 * horizontalLineWidthPx - nodeWidthPx
+  const rootX = firstChildX - 2 * connectorWidthPx - nodeWidthPx
   const rootY = firstChildY + height / 2
-
   drawNode(root, rootX, rootY)
 
   const connectorY = rootY + nodeHeightPx / 2
@@ -44,17 +53,10 @@ function startRendering(data, firstChildX, firstChildY) {
   // connector to the right
   drawLine(
     new Point(connectorX, connectorY),
-    new Point(connectorX + horizontalLineWidthPx, connectorY)
+    new Point(connectorX + connectorWidthPx, connectorY)
   )
 
-  console.log(
-    '\n',
-    nodesToDraw.map((x) => `${x.node.name}: ${x.point.print()}`).join('\n'),
-    '\n\n',
-    linesToDraw
-      .map((x) => `${x.point1.print()} -> ${x.point2.print()}`)
-      .join('\n')
-  )
+  return { nodesToDraw, linesToDraw }
 }
 
 function renderGraph(data, node, x, y, hasChildren) {
@@ -65,14 +67,14 @@ function renderGraph(data, node, x, y, hasChildren) {
       // connector to the right
       drawLine(
         new Point(connectorX, connectorY),
-        new Point(connectorX + horizontalLineWidthPx, connectorY)
+        new Point(connectorX + connectorWidthPx, connectorY)
       )
     }
 
     // connector to the left
     drawLine(
       new Point(x, connectorY),
-      new Point(x - horizontalLineWidthPx, connectorY)
+      new Point(x - connectorWidthPx, connectorY)
     )
     drawNode(node, x, y)
   }
@@ -85,15 +87,15 @@ function renderGraph(data, node, x, y, hasChildren) {
     renderGraph(
       data,
       children[index],
-      x + 2 * horizontalLineWidthPx + nodeWidthPx,
-      nodeHeightPx + verticalMarginPx + height / 2,
+      x + 2 * connectorWidthPx + nodeWidthPx,
+      nodeHeightPx + nodeSpacingPx + height / 2,
       descendentCount > 1
     )
   }
 
   if (height) {
     // vertical children connector
-    const connectorX = x - horizontalLineWidthPx
+    const connectorX = x - connectorWidthPx
     drawLine(new Point(connectorX, y), new Point(connectorX, y + height))
   }
   return height
@@ -114,4 +116,5 @@ function drawLine(point1, point2) {
   linesToDraw.push({ point1, point2 })
 }
 
-module.exports = { startRendering }
+export { startRendering }
+// module.exports = { startRendering }
