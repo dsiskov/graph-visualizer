@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express'
 
+// todo: replace with a call from a graphDB
 const data = [
   {
     name: 'A',
