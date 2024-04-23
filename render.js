@@ -3,6 +3,20 @@ const nodeWidthPx = 300
 const horizontalLineWidthPx = 15
 const verticalMarginPx = 5
 
+const nodesToDraw = []
+const linesToDraw = []
+
+class Point {
+  constructor(x, y) {
+    this.x = x
+    this.y = y
+  }
+
+  print() {
+    return `(${this.x}, ${this.y})`
+  }
+}
+
 function startRendering(data, firstChildX, firstChildY) {
   const root = data.find((x) => x.parent === '')
   const children = data.filter((x) => x.parent === root.name)
@@ -20,27 +34,47 @@ function startRendering(data, firstChildX, firstChildY) {
     return
   }
 
-  rootX = firstChildX - 2 * horizontalLineWidthPx - nodeWidthPx
-  rootY = firstChildY + height / 2
+  const rootX = firstChildX - 2 * horizontalLineWidthPx - nodeWidthPx
+  const rootY = firstChildY + height / 2
 
   drawNode(root, rootX, rootY)
-  drawHorizontal(
-    rootY + nodeHeightPx / 2,
-    rootX + nodeWidthPx,
-    horizontalLineWidthPx
+
+  const connectorY = rootY + nodeHeightPx / 2
+  const connectorX = rootX + nodeWidthPx
+  // connector to the right
+  drawLine(
+    new Point(connectorX, connectorY),
+    new Point(connectorX + horizontalLineWidthPx, connectorY)
+  )
+
+  console.log(
+    '\n',
+    nodesToDraw.map((x) => `${x.node.name}: ${x.point.print()}`).join('\n'),
+    '\n\n',
+    linesToDraw
+      .map((x) => `${x.point1.print()} -> ${x.point2.print()}`)
+      .join('\n')
   )
 }
 
-function renderGraph(data, node, offsetX, offsetY, hasChildren) {
+function renderGraph(data, node, x, y, hasChildren) {
   if (node.parent !== '') {
-    if (hasChildren)
-      drawHorizontal(
-        offsetY + nodeHeightPx / 2,
-        offsetX + nodeWidthPx,
-        horizontalLineWidthPx
+    const connectorY = y + nodeHeightPx / 2 // middle of block
+    if (hasChildren) {
+      const connectorX = x + nodeWidthPx // end of block
+      // connector to the right
+      drawLine(
+        new Point(connectorX, connectorY),
+        new Point(connectorX + horizontalLineWidthPx, connectorY)
       )
-    drawHorizontal(offsetY + nodeHeightPx / 2, offsetX, -horizontalLineWidthPx)
-    drawNode(node, offsetX, offsetY)
+    }
+
+    // connector to the left
+    drawLine(
+      new Point(x, connectorY),
+      new Point(x - horizontalLineWidthPx, connectorY)
+    )
+    drawNode(node, x, y)
   }
   const children = data.filter((x) => x.parent === node.name)
 
@@ -51,13 +85,17 @@ function renderGraph(data, node, offsetX, offsetY, hasChildren) {
     renderGraph(
       data,
       children[index],
-      offsetX + 2 * horizontalLineWidthPx + nodeWidthPx,
+      x + 2 * horizontalLineWidthPx + nodeWidthPx,
       nodeHeightPx + verticalMarginPx + height / 2,
       descendentCount > 1
     )
   }
 
-  if (height) drawVertical(offsetX - horizontalLineWidthPx, offsetY, height)
+  if (height) {
+    // vertical children connector
+    const connectorX = x - horizontalLineWidthPx
+    drawLine(new Point(connectorX, y), new Point(connectorX, y + height))
+  }
   return height
 }
 
@@ -69,15 +107,11 @@ function getDescendentCount(data, node) {
 }
 
 function drawNode(node, x, y) {
-  console.log('drawing', node.name, 'on', { x, y })
+  nodesToDraw.push({ point: new Point(x, y), node })
 }
 
-function drawHorizontal(y, x, length) {
-  console.log(`drawing horizontal from (${x}, ${y}) to (${x + length}, ${y})`)
-}
-
-function drawVertical(x, y, length) {
-  console.log(`drawing vertical from (${x}, ${y}) to (${x}, ${y + length})`)
+function drawLine(point1, point2) {
+  linesToDraw.push({ point1, point2 })
 }
 
 module.exports = { startRendering }
