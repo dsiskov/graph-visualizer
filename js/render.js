@@ -84,17 +84,16 @@ function renderGraph(data, node, x, y, hasChildren) {
   let height = 0
   for (let index = 0; index < children.length; index++) {
     const descendentCount = getDescendentCount(data, children[index])
-    const hasGrandChildren = descendentCount >= 1
     height += nodeHeightPx + nodeSpacingPx
-    // height += descendentCount * nodeHeightPx
 
     renderGraph(
       data,
       children[index],
       x + 2 * connectorWidthPx + nodeWidthPx,
       y + height,
-      hasGrandChildren
+      descendentCount > 0
     )
+    height += descendentCount * nodeHeightPx + descendentCount * nodeSpacingPx
   }
 
   if (height) {
