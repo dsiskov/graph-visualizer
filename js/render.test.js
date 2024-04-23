@@ -59,27 +59,7 @@ describe('render', () => {
    * A  D
    *    F
    */
-  it('renders a complex graph with multiple children for some nodes', () => {
-    const getNode = (nodeName) =>
-      nodesToDraw.find((x) => x.node.name === nodeName)
-    const getLeftConnector = (nodeName) => {
-      const nodeBMiddleLeftY = getNode(nodeName).point.y + nodeHeightPx / 2
-      const nodeBMiddleLeftX = getNode(nodeName).point.x
-      return linesToDraw.find(
-        (x) =>
-          x.point1.x === nodeBMiddleLeftX && x.point1.y === nodeBMiddleLeftY
-      )
-    }
-    const getRightConnector = (nodeName) => {
-      const nodeBMiddleLeftY = getNode(nodeName).point.y + nodeHeightPx / 2
-      const nodeBMiddleLeftX = getNode(nodeName).point.x
-      return linesToDraw.find(
-        (x) =>
-          x.point1.x === nodeBMiddleLeftX + nodeWidthPx &&
-          x.point1.y === nodeBMiddleLeftY
-      )
-    }
-
+  describe('complex graph', () => {
     // arrange
     const data = [
       {
@@ -108,43 +88,84 @@ describe('render', () => {
       },
     ]
 
-    // act
-    const { nodesToDraw, linesToDraw } = startRendering(data, 100, 0)
-    expect(nodesToDraw).not.toBeNull()
+    it('renders a complex graph with multiple children for some nodes', () => {
+      const getNode = (nodeName) =>
+        nodesToDraw.find((x) => x.node.name === nodeName)
 
-    // assert
+      // act
+      const { nodesToDraw } = startRendering(data, 100, 0)
+      expect(nodesToDraw).not.toBeNull()
 
-    // Draw D node to have sufficient spacing for its children, if any
-    expect(getNode('D').point.y).toBeGreaterThan(getNode('E').point.y)
+      // assert
 
-    // Children are displayed on the right of their parent
-    expect(getNode('C').point.x).toBeGreaterThan(getNode('B').point.x)
+      // Draw D node to have sufficient spacing for its children, if any
+      expect(getNode('D').point.y).toBeGreaterThan(getNode('E').point.y)
 
-    const allNodesXOffsetExceptParent = nodesToDraw
-      .filter((x) => x.node.parent !== '')
-      .map((x) => x.point.x)
-    const rootXOffset = getNode('A').point.x
+      // Children are displayed on the right of their parent
+      expect(getNode('C').point.x).toBeGreaterThan(getNode('B').point.x)
 
-    // The root is the left-most node in the drawn graph
-    expect(allNodesXOffsetExceptParent.every((x) => x > rootXOffset)).toBe(true)
+      const allNodesXOffsetExceptParent = nodesToDraw
+        .filter((x) => x.node.parent !== '')
+        .map((x) => x.point.x)
+      const rootXOffset = getNode('A').point.x
 
-    // Node B has two connector lines: left and right
-    const connectorLineLeft = getLeftConnector('B')
-    const nodeBMiddleLeftY = getNode('B').point.y + nodeHeightPx / 2
+      // The root is the left-most node in the drawn graph
+      expect(allNodesXOffsetExceptParent.every((x) => x > rootXOffset)).toBe(
+        true
+      )
+    })
 
-    // left connector
-    expect(connectorLineLeft).toBeTruthy()
-    expect(connectorLineLeft.point2.x).toBe(
-      getNode('B').point.x - connectorWidthPx
-    )
-    expect(connectorLineLeft.point2.y).toBe(nodeBMiddleLeftY)
+    /**
+     *    -B-
+     *       C
+     *       E
+     * A  D
+     *    F
+     */
+    it('properly renders the connectors of a complex graph with multiple children for some nodes', () => {
+      const getNode = (nodeName) =>
+        nodesToDraw.find((x) => x.node.name === nodeName)
 
-    // right connector
-    const connectorLineRight = getRightConnector('B')
-    expect(connectorLineRight).toBeTruthy()
-    expect(connectorLineRight.point2.x).toBe(
-      getNode('B').point.x + nodeWidthPx + connectorWidthPx
-    )
-    expect(connectorLineRight.point2.y).toBe(nodeBMiddleLeftY)
+      // act
+      const { nodesToDraw, linesToDraw } = startRendering(data, 100, 0)
+      expect(linesToDraw).not.toBeNull()
+
+      const getLeftConnector = (nodeName) => {
+        const nodeBMiddleLeftY = getNode(nodeName).point.y + nodeHeightPx / 2
+        const nodeBMiddleLeftX = getNode(nodeName).point.x
+        return linesToDraw.find(
+          (x) =>
+            x.point1.x === nodeBMiddleLeftX && x.point1.y === nodeBMiddleLeftY
+        )
+      }
+      const getRightConnector = (nodeName) => {
+        const nodeBMiddleLeftY = getNode(nodeName).point.y + nodeHeightPx / 2
+        const nodeBMiddleLeftX = getNode(nodeName).point.x
+        return linesToDraw.find(
+          (x) =>
+            x.point1.x === nodeBMiddleLeftX + nodeWidthPx &&
+            x.point1.y === nodeBMiddleLeftY
+        )
+      }
+
+      // Node B has two connector lines: left and right
+      const connectorLineLeft = getLeftConnector('B')
+      const nodeBMiddleLeftY = getNode('B').point.y + nodeHeightPx / 2
+
+      // left connector
+      expect(connectorLineLeft).toBeTruthy()
+      expect(connectorLineLeft.point2.x).toBe(
+        getNode('B').point.x - connectorWidthPx
+      )
+      expect(connectorLineLeft.point2.y).toBe(nodeBMiddleLeftY)
+
+      // right connector
+      const connectorLineRight = getRightConnector('B')
+      expect(connectorLineRight).toBeTruthy()
+      expect(connectorLineRight.point2.x).toBe(
+        getNode('B').point.x + nodeWidthPx + connectorWidthPx
+      )
+      expect(connectorLineRight.point2.y).toBe(nodeBMiddleLeftY)
+    })
   })
 })
