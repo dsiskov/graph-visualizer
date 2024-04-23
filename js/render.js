@@ -44,7 +44,7 @@ function startRendering(data, firstChildX, firstChildY) {
     return
   }
 
-  const rootX = firstChildX - 2 * connectorWidthPx
+  const rootX = firstChildX
   const rootY = firstChildY + height / 2
 
   drawNode(root, rootX, rootY)
