@@ -39,9 +39,14 @@ const dataGraph = [
     description: 'This is a description of B-3',
     parent: 'B',
   },
+  // {
+  //   name: 'E',
+  //   description: 'This is a description of E',
+  //   parent: 'D',
+  // },
 ]
 
-const { nodesToDraw, linesToDraw } = startRendering(dataGraph, 300, 0)
+const { nodesToDraw, linesToDraw } = startRendering(dataGraph, 300, 100)
 drawNodes(nodesToDraw)
 // drawNodes([nodesToDraw[1], nodesToDraw[5]])
 drawLines(linesToDraw)

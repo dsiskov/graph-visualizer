@@ -37,8 +37,6 @@ function startRendering(data, firstChildX, firstChildY) {
     children.length > 0
   )
 
-  console.log('height', height)
-
   // render root
   if (height === 0) {
     // no children
@@ -48,7 +46,6 @@ function startRendering(data, firstChildX, firstChildY) {
 
   const rootX = firstChildX - 2 * connectorWidthPx
   const rootY = firstChildY + height / 2
-  console.log({ firstChildX, rootX, rootY })
 
   drawNode(root, rootX, rootY)
 
@@ -87,13 +84,16 @@ function renderGraph(data, node, x, y, hasChildren) {
   let height = 0
   for (let index = 0; index < children.length; index++) {
     const descendentCount = getDescendentCount(data, children[index])
-    height += descendentCount * nodeHeightPx
+    const hasGrandChildren = descendentCount >= 1
+    height += nodeHeightPx + nodeSpacingPx
+    // height += descendentCount * nodeHeightPx
+
     renderGraph(
       data,
       children[index],
       x + 2 * connectorWidthPx + nodeWidthPx,
-      y + nodeHeightPx + nodeSpacingPx + height / 2,
-      descendentCount > 1
+      y + height,
+      hasGrandChildren
     )
   }
 
@@ -110,9 +110,12 @@ function renderGraph(data, node, x, y, hasChildren) {
 
 function getDescendentCount(data, node) {
   const children = data.filter((x) => x.parent === node.name)
-  if (!children.length) return 1
+  if (!children.length) return 0
 
-  return children.reduce((acc, curr) => acc + getDescendentCount(data, curr), 0)
+  return children.reduce(
+    (acc, curr) => acc + getDescendentCount(data, curr) + 1,
+    0
+  )
 }
 
 function drawNode(node, x, y) {
@@ -124,4 +127,3 @@ function drawLine(point1, point2) {
 }
 
 export { startRendering }
-// module.exports = { startRendering }
