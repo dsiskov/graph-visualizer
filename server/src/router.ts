@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express'
 
-const dataGraph = [
+const data = [
   {
     name: 'A',
     description: 'This is a description of A',
@@ -56,7 +56,7 @@ const dataGraph = [
 const router = express.Router()
 
 router.get('/data', (req: Request, res: Response) => {
-  res.json({ data: dataGraph })
+  res.json({ data })
 })
 
 export default router

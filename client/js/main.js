@@ -3,66 +3,32 @@
 import { startRendering } from './render.js'
 import { drawNodes, drawLines } from './d3.js'
 
-const dataGraph = [
-  {
-    name: 'A',
-    description: 'This is a description of A',
-    parent: '',
-  },
-  {
-    name: 'C',
-    description: 'This is a description of C',
-    parent: 'A',
-  },
-  {
-    name: 'B',
-    description: 'This is a description of B',
-    parent: 'A',
-  },
-  {
-    name: 'D',
-    description: 'This is a description of D',
-    parent: 'A',
-  },
-  {
-    name: 'B-1',
-    description: 'This is a description of B-1',
-    parent: 'B',
-  },
-  {
-    name: 'B-2',
-    description: 'This is a description of B-2',
-    parent: 'B',
-  },
-  {
-    name: 'B-2-2',
-    description: 'This is a description of B-2',
-    parent: 'B-2',
-  },
-  {
-    name: 'B-3',
-    description: 'This is a description of B-3',
-    parent: 'B',
-  },
-  {
-    name: 'E',
-    description: 'This is a description of E',
-    parent: 'D',
-  },
-  {
-    name: 'B-2-1',
-    description: 'This is a description of B-2',
-    parent: 'B-2',
-  },
-]
+const dataEndpoint = 'http://localhost:4000/api/data'
 
-const { nodesToDraw, linesToDraw } = startRendering(dataGraph, 300, 40)
-drawNodes(nodesToDraw)
-drawLines(linesToDraw)
+async function initializeScreen() {
+  try {
+    const response = await axios.get(dataEndpoint)
+    console.log(response)
+
+    const { nodesToDraw, linesToDraw } = startRendering(
+      response.data.data,
+      300,
+      40
+    )
+    drawNodes(nodesToDraw)
+    drawLines(linesToDraw)
+  } catch (error) {
+    throw new Error('Error while initializing screen', error)
+  }
+}
 
 var modal = document.getElementById('modal')
 var closePopup = document.getElementsByClassName('close')[0]
 
 closePopup.onclick = function () {
   modal.style.display = 'none'
+}
+
+window.onload = function () {
+  initializeScreen()
 }
