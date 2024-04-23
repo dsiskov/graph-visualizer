@@ -1,5 +1,7 @@
+// NB: test locally with: npx nodemon --exec 'http-server'
+
 import { startRendering } from './render.js'
-import { drawNodes } from './d3.js'
+import { drawNodes, drawLines } from './d3.js'
 
 const dataGraph = [
   {
@@ -39,5 +41,7 @@ const dataGraph = [
   },
 ]
 
-const { nodesToDraw, linesToDraw } = startRendering(dataGraph, 100, 0)
+const { nodesToDraw, linesToDraw } = startRendering(dataGraph, 300, 0)
 drawNodes(nodesToDraw)
+// drawNodes([nodesToDraw[1], nodesToDraw[5]])
+drawLines(linesToDraw)

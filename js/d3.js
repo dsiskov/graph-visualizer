@@ -4,12 +4,6 @@ import { nodeWidthPx, nodeHeightPx } from './render.js'
 const svgWidth = 1400
 const svgHeight = 1200
 
-// Define data for rectangles and line
-const data = [
-  { x: 50, y: 50 },
-  { x: 150, y: 50 },
-]
-
 // Create SVG element
 const svg = d3
   .select('#svg-container')
@@ -23,16 +17,42 @@ export function drawNodes(nodes) {
     .enter()
     .append('rect')
     .attr('class', 'rect')
-    .attr('x', (d) => d.point.x)
+    .attr('x', (d) => {
+      console.log('drawing', d.point.print())
+      return d.point.x
+    })
     .attr('y', (d) => d.point.y)
     .attr('width', nodeWidthPx)
     .attr('height', nodeHeightPx)
+    .style('fill', 'steelblue')
+
+  svg
+    .selectAll('.text')
+    .data(nodes)
+    .enter()
+    .append('text')
+    .attr('class', 'text')
+    .attr('x', (d) => d.point.x + nodeWidthPx / 2)
+    .attr('y', (d) => d.point.y + nodeHeightPx / 2)
+    .attr('text-anchor', 'middle')
+    .attr('alignment-baseline', 'middle')
+    .style('fill', 'white')
+    .text((d) => d.node.name)
 }
 
-// svg
-//   .append('line')
-//   .attr('class', 'line')
-//   .attr('x1', data[0].x + 50 / 2)
-//   .attr('y1', data[0].y + 50 / 2)
-//   .attr('x2', data[1].x + 50 / 2)
-//   .attr('y2', data[1].y + 50 / 2)
+export function drawLines(lines) {
+  const lineSelection = svg
+    .selectAll('.line')
+    .data(lines)
+    .enter()
+    .append('line')
+    .attr('class', 'line')
+
+  lineSelection
+    .attr('x1', (d) => d.point1.x)
+    .attr('y1', (d) => d.point1.y)
+    .attr('x2', (d) => d.point2.x)
+    .attr('y2', (d) => d.point2.y)
+    .style('stroke', 'red')
+    .style('stroke-width', 2)
+}

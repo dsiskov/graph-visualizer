@@ -1,7 +1,7 @@
 export const nodeHeightPx = 50
-export const nodeWidthPx = 300
+export const nodeWidthPx = 120
 export const connectorWidthPx = 15
-export const nodeSpacingPx = 5
+export const nodeSpacingPx = 20
 
 let nodesToDraw = []
 let linesToDraw = []
@@ -37,6 +37,8 @@ function startRendering(data, firstChildX, firstChildY) {
     children.length > 0
   )
 
+  console.log('height', height)
+
   // render root
   if (height === 0) {
     // no children
@@ -44,8 +46,10 @@ function startRendering(data, firstChildX, firstChildY) {
     return
   }
 
-  const rootX = firstChildX - 2 * connectorWidthPx - nodeWidthPx
+  const rootX = firstChildX - 2 * connectorWidthPx
   const rootY = firstChildY + height / 2
+  console.log({ firstChildX, rootX, rootY })
+
   drawNode(root, rootX, rootY)
 
   const connectorY = rootY + nodeHeightPx / 2
@@ -88,15 +92,18 @@ function renderGraph(data, node, x, y, hasChildren) {
       data,
       children[index],
       x + 2 * connectorWidthPx + nodeWidthPx,
-      nodeHeightPx + nodeSpacingPx + height / 2,
+      y + nodeHeightPx + nodeSpacingPx + height / 2,
       descendentCount > 1
     )
   }
 
   if (height) {
     // vertical children connector
-    const connectorX = x - connectorWidthPx
-    drawLine(new Point(connectorX, y), new Point(connectorX, y + height))
+    const connectorX = x + connectorWidthPx + nodeWidthPx
+    drawLine(
+      new Point(connectorX, y + nodeHeightPx / 2),
+      new Point(connectorX, y + height + nodeHeightPx / 2)
+    )
   }
   return height
 }
